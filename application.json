@@ -1,0 +1,31 @@
+{
+    "chassis_version": "latest",
+    "deploy_version": 2,
+    "description": "",
+    "github_repo": "git@github.com:oreillymedia/celeryman.git",
+    "jenkins": {
+        "deploy_releases_to": [
+            "prod-gke"
+        ],
+        "deploy_stable_to": [
+            "dev-gke"
+        ],
+        "integration_test_marks": [],
+        "published_branches": [
+            "master"
+        ],
+        "run_integration_tests": false,
+        "stable_branch": "master"
+    },
+    "kubedir": "kube",
+    "name": "celeryman",
+    "namespace": "celeryman",
+    "new_relic_applications": {
+        "dev-gke": "",
+        "prod-gke": ""
+    },
+    "ports": {
+        "web": 8247
+    },
+    "team": ""
+}

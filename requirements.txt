@@ -1,0 +1,6 @@
+# This file will be overwritten by the `update_requirements` command
+# Please do not add requirements here manually
+# Add all requirments to your `requirements.in` then run:
+    # docker-compose run --rm manage update_requirements
+# This will kick off pip-tools and autogenerate this file with the correct
+# versions of all your desired packages with their dependencies

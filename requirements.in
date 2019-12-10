@@ -1,0 +1,5 @@
+# Add your project's specific top level requirements here
+# Then you can compile a full list of pinned dependencies with
+#
+#    docker-compose run --rm manage update_requirements
+#

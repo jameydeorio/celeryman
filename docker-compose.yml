@@ -1,0 +1,119 @@
+# This file is automatically created by the `regen` command.
+# To make changes please edit the `SERVICE_FEATURES` setting.
+# See https://devdocs.platform-dev.gcp.oreilly.com/chassis/features.html#service-features-setting
+networks:
+  default:
+    name: celeryman
+  platform:
+    external: true
+services:
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /orm/chassis/start.py celery --queues=fast,slow
+    depends_on:
+    - database
+    - redis
+    env_file: env.local
+    networks:
+      default: {}
+      platform: {}
+    volumes:
+    - ./:/orm/service:consistent
+  consumers:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /orm/chassis/start.py consumers --label=consumers
+    depends_on:
+    - database
+    - redis
+    env_file: env.local
+    networks:
+      default: {}
+      platform: {}
+    volumes:
+    - ./:/orm/service:consistent
+  database:
+    environment:
+      POSTGRES_DB: celeryman
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: celeryman
+    image: postgres:9.6.15
+    networks:
+      default: {}
+    volumes:
+    - data:/var/lib/postgresql/data
+  dredd:
+    build:
+      context: .
+      dockerfile: Dockerfile.dredd
+    command: /orm/service/docs/celeryman.apib http://localhost:8000/ --sorted --server='python
+      /orm/manage.py start_dredd_server' --server-wait=10 --hooks-worker-connect-timeout=10000
+      --hooks-worker-timeout=30000 --language=python --hooks-worker-after-connect-wait=2000
+      --hookfiles=/orm/chassis/docs/chassis_hooks.py
+    depends_on:
+    - database
+    env_file: env.local
+    environment:
+      DB_TEST_NAME: dredd_celeryman
+      REDIS_CACHE_DB: 13
+    networks:
+      default: {}
+    volumes:
+    - ./:/orm/dredd
+    - ./:/orm/service:consistent
+  manage:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: shell_plus
+    depends_on:
+    - database
+    entrypoint: /usr/local/bin/python /orm/manage.py
+    env_file: env.local
+    networks:
+      default: {}
+      platform: {}
+    volumes:
+    - ~/.chassis:/root/.chassis
+    - ./:/orm/service:consistent
+  redis:
+    image: redis:3.2
+    networks:
+      default: {}
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /orm/chassis/core/tests/service/ /orm/service/
+    depends_on:
+    - database
+    entrypoint: /usr/local/bin/py.test
+    env_file: env.tests
+    networks:
+      default: {}
+    restart: 'no'
+    volumes:
+    - ./:/orm/service:consistent
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python /orm/manage.py runserver 0.0.0.0:8247
+    depends_on:
+    - database
+    env_file: env.local
+    networks:
+      default: {}
+      platform:
+        aliases:
+        - celeryman
+    ports:
+    - 8247:8247
+    volumes:
+    - ./:/orm/service:consistent
+version: '2.1'
+volumes:
+  data: {}

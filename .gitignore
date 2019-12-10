@@ -1,0 +1,35 @@
+*~
+__pycache__
+*.pyc
+*.secret.*
+
+# Add a docker-compose.override.yml to set local secrets in the containers
+docker-compose.override.yml
+
+# IDE related files
+.idea
+.coverage
+cov.xml
+.cov.xml
+.environment
+.userid
+.vscode/
+*.sublime-*
+
+# Temporary storage
+.cache/
+.DS_Store
+.ipython
+.pytest_cache/
+
+# SQLite databases
+*.sqlite3
+
+# generated directories for deployment pipeline
+istio-system/
+kube/
+
+# Files from pre-chassis systems that are no longer necessary
+.coveragerc
+pytest.ini
+setup.py
