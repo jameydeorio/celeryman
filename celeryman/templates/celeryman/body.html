@@ -2,7 +2,6 @@
     {% for author in authors %}
         <h3>{{ author.name }}</h3>
         <img src="{{ author.avatar_url }}" alt="{{ author.name }}" width="100" height="100">
-        <h4>Repos</h4>
         <hr>
     {% endfor %}
 {% endblock %}
