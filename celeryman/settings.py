@@ -59,7 +59,6 @@ SERVICE_FEATURES = {
     },
     "celery": {
         "cls": "chassis.features.Celery",
-        "queues": ["fast", "slow"],
         "depends_on": ["database", "redis"],
         "kubernetes": {
             "replicas": 2,
@@ -72,17 +71,6 @@ SERVICE_FEATURES = {
     "redis": {
         "cls": "chassis.features.Redis",
         "docker_compose": {"image": "redis:3.2"},
-    },
-    "consumers": {
-        "cls": "chassis.features.Consumers",
-        "depends_on": ["database", "redis"],
-        "kubernetes": {
-            "replicas": 2,
-            "resources": {
-                "requests": {"cpu": "250m", "memory": "250Mi"},
-                "limits": {"cpu": "500m", "memory": "400Mi"},
-            }
-        }
     },
 }
 
