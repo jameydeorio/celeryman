@@ -17,6 +17,8 @@ from django.urls import path
 
 from chassis.urls import urlpatterns as chassis_urls
 
+from celeryman import views
+
 # chassis_urls includes:
 #  diagnostics/error
 #  health/(live|ready|status)
@@ -28,4 +30,5 @@ from chassis.urls import urlpatterns as chassis_urls
 
 urlpatterns = [
     # add your service's URLs here
+    path('', views.index, name='home')
 ] + chassis_urls

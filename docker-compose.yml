@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: /orm/chassis/start.py celery --queues=fast,slow
+    command: /orm/chassis/start.py celery --queues=celery
     depends_on:
     - database
     - redis

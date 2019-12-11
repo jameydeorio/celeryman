@@ -3,3 +3,4 @@
 #
 #    docker-compose run --rm manage update_requirements
 #
+requests
