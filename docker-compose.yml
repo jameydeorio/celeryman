@@ -21,6 +21,19 @@ services:
       platform: {}
     volumes:
     - ./:/orm/service:consistent
+  celerybeat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /orm/chassis/start.py celerybeat
+    depends_on:
+    - database
+    - redis
+    env_file: env.local
+    networks:
+      default: {}
+    volumes:
+    - ./:/orm/service:consistent
   database:
     environment:
       POSTGRES_DB: celeryman

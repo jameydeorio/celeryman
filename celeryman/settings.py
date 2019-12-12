@@ -1,5 +1,7 @@
 import os
 
+from celery.schedules import crontab
+
 from chassis.settings import *  # noqa: F403
 
 SERVICE_NAME = SERVICE_CONF.name  # noqa: F405
@@ -72,6 +74,16 @@ SERVICE_FEATURES = {
         "cls": "chassis.features.Redis",
         "docker_compose": {"image": "redis:3.2"},
     },
+    "celerybeat": {
+        "cls": "chassis.features.CeleryBeat",
+        "depends_on": ["database", "redis"],
+        "kubernetes": {
+            "resources": {
+                "requests": {"cpu": "64m", "memory": "64Mi"},
+                "limits": {"cpu": "128m", "memory": "128Mi"}
+            }
+        }
+    },
 }
 
 INSTALLED_APPS += [  # noqa: F405
@@ -95,8 +107,25 @@ DATABASES = {
 
 JWT_ENABLED = True
 
-GITHUB_ACCESS_TOKEN = os.getenv("GITHUB_ACCESS_TOKEN")
+TWITTER_CONSUMER_KEY = os.environ.get("TWITTER_CONSUMER_KEY")
+TWITTER_CONSUMER_SECRET = os.environ.get("TWITTER_CONSUMER_SECRET")
 
 CELERY_WORKER_DISABLE_RATE_LIMITS = True
 CELERY_SEND_TASK_ERROR_EMAILS = True
 CELERY_TASK_TIME_LIMIT = 23 * 60 * 60  # 23 hours
+
+CELERY_TASK_ALWAYS_EAGER = False
+
+CELERY_BEAT_SCHEDULE = {
+    "fetch_avatar_urls": {
+        "task": "celeryman.tasks.fetch_avatar_urls",
+        "schedule": crontab(minute="*/1")
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+    }
+}

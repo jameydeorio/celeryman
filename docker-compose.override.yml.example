@@ -1,6 +1,6 @@
 services:
   web:
     environment:
-      - GITHUB_USER_NAME=get from github
-      - GITHUB_ACCESS_TOKEN=get from github
+      - TWITTER_CONSUMER_KEY=
+      - TWITTER_CONSUMER_SECRET=
 version: '2.1'
