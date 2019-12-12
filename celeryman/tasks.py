@@ -1,4 +1,5 @@
 import base64
+import logging
 
 import requests
 
@@ -7,6 +8,9 @@ from django.conf import settings
 from django.core.cache import cache
 
 from celeryman import models
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_twitter_token():
@@ -47,3 +51,8 @@ def set_twitter_user_avatar(username):
 def fetch_avatar_urls():
     for author in models.Author.objects.all():
         set_twitter_user_avatar(author.twitter_username)
+
+
+@app.task
+def do_something_in_celery(msg):
+    logger.info(f">>> do_something_in_celery: {msg}")

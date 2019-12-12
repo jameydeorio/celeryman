@@ -66,7 +66,7 @@ SERVICE_FEATURES = {
             "replicas": 2,
             "resources": {
                 "requests": {"cpu": "250m", "memory": "250Mi"},
-                "limits": {"cpu": "500m", "memory": "400Mi"},
+                "limits": {"cpu": "500m", "memory": "375Mi"},
             },
         },
     },
@@ -81,6 +81,17 @@ SERVICE_FEATURES = {
             "resources": {
                 "requests": {"cpu": "64m", "memory": "64Mi"},
                 "limits": {"cpu": "128m", "memory": "128Mi"}
+            }
+        }
+    },
+    "consumers": {
+        "cls": "chassis.features.Consumers",
+        "depends_on": ["database", "redis"],
+        "kubernetes": {
+            "replicas": 1,
+            "resources": {
+                "requests": {"cpu": "250m", "memory": "250Mi"},
+                "limits": {"cpu": "500m", "memory": "375Mi"}
             }
         }
     },
@@ -114,14 +125,14 @@ CELERY_WORKER_DISABLE_RATE_LIMITS = True
 CELERY_SEND_TASK_ERROR_EMAILS = True
 CELERY_TASK_TIME_LIMIT = 23 * 60 * 60  # 23 hours
 
-CELERY_TASK_ALWAYS_EAGER = False
+CELERY_TASK_ALWAYS_EAGER = True
 
-CELERY_BEAT_SCHEDULE = {
-    "fetch_avatar_urls": {
-        "task": "celeryman.tasks.fetch_avatar_urls",
-        "schedule": crontab(minute="*/1")
-    }
-}
+# CELERY_BEAT_SCHEDULE = {
+#     "fetch_avatar_urls": {
+#         "task": "celeryman.tasks.fetch_avatar_urls",
+#         "schedule": crontab(minute="*/1")
+#     }
+# }
 
 CACHES = {
     'default': {
@@ -129,3 +140,19 @@ CACHES = {
         'LOCATION': 'cache_table',
     }
 }
+
+CELERYMAN_WORK_CUD_ROUTING_KEY = f"magpie.work.*.{ENV}"
+CELERYMAN_MAGPIE_WORK_CUD_QUEUE = (
+    f"Celeryman-magpie-work-CUD-{ENV}"  # noqa: F405
+)
+
+
+# DEFAULT_CONSUMER_BROKER = [
+#     'amqp://certifications_service:f1ef0a4f5e5785e513e4d27f97d86bbf@rabbitmq-0.platform-prod.gcp.oreilly.com:5672',
+#     'amqp://certifications_service:f1ef0a4f5e5785e513e4d27f97d86bbf@rabbitmq-1.platform-prod.gcp.oreilly.com:5672',
+#     'amqp://certifications_service:f1ef0a4f5e5785e513e4d27f97d86bbf@rabbitmq-2.platform-prod.gcp.oreilly.com:5672',
+# ]
+DEFAULT_CONSUMER_BROKER = "amqp://guest:guest@rabbitmq.platform:5672//"
+
+EVENT_BROKER = DEFAULT_CONSUMER_BROKER
+CONSUMER_EVENT_BROKER = DEFAULT_CONSUMER_BROKER

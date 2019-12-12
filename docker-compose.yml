@@ -34,6 +34,20 @@ services:
       default: {}
     volumes:
     - ./:/orm/service:consistent
+  consumers:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /orm/chassis/start.py consumers --label=consumers
+    depends_on:
+    - database
+    - redis
+    env_file: env.local
+    networks:
+      default: {}
+      platform: {}
+    volumes:
+    - ./:/orm/service:consistent
   database:
     environment:
       POSTGRES_DB: celeryman
